@@ -19,23 +19,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+    <meta name="description" content="研究目的:剛接觸後端的時候就對大流量以及高併發的設計很有興趣，但礙於當初製作個人專案時間有限以及相關知識涉略不足，因此沒能系統性的去理解這門學問。 最近有時間重新研究這個課題，之前專案想做的主題和購物網站的秒殺活動或是熱門演唱會的售票網站方向大致向同。都是想研究一個網頁應用在大流量以及高併發下藥怎麼設計。 甚麼是大流量問題:每個server有處理請求的極限，如果今天某電商網站的server只有一台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="併發解決方案 - 樂觀鎖">
+<meta property="og:url" content="http://example.com/2024/05/04/optimistic-concurrency-control/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="研究目的:剛接觸後端的時候就對大流量以及高併發的設計很有興趣，但礙於當初製作個人專案時間有限以及相關知識涉略不足，因此沒能系統性的去理解這門學問。 最近有時間重新研究這個課題，之前專案想做的主題和購物網站的秒殺活動或是熱門演唱會的售票網站方向大致向同。都是想研究一個網頁應用在大流量以及高併發下藥怎麼設計。 甚麼是大流量問題:每個server有處理請求的極限，如果今天某電商網站的server只有一台">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T06:15:11.000Z">
+<meta property="article:modified_time" content="2024-05-04T17:34:11.251Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2024/05/04/optimistic-concurrency-control/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/05/04/optimistic-concurrency-control/","path":"2024/05/04/optimistic-concurrency-control/","title":"併發解決方案 - 樂觀鎖"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hexo</title>
+<title>併發解決方案 - 樂觀鎖 | Hexo</title>
   
 
 
@@ -65,7 +69,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Hexo</h1>
+      <p class="site-title">Hexo</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -129,16 +133,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/04/optimistic-concurrency-control/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -152,13 +157,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="name" content="併發解決方案 - 樂觀鎖 | Hexo">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/04/optimistic-concurrency-control/" class="post-title-link" itemprop="url">併發解決方案 - 樂觀鎖</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          併發解決方案 - 樂觀鎖
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -187,8 +192,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p>研究目的:<br>剛接觸後端的時候就對大流量以及高併發的設計很有興趣，但礙於當初製作個人專案時間有限以及相關知識涉略不足，因此沒能系統性的去理解這門學問。</p>
+    <div class="post-body" itemprop="articleBody"><p>研究目的:<br>剛接觸後端的時候就對大流量以及高併發的設計很有興趣，但礙於當初製作個人專案時間有限以及相關知識涉略不足，因此沒能系統性的去理解這門學問。</p>
 <p>最近有時間重新研究這個課題，之前專案想做的主題和購物網站的秒殺活動或是熱門演唱會的售票網站方向大致向同。都是想研究一個網頁應用在大流量以及高併發下藥怎麼設計。</p>
 <p>甚麼是大流量問題:<br>每個server有處理請求的極限，如果今天某電商網站的server只有一台，並且這台server的請求處理極限是每秒鐘100筆。如果有超過一百個使用者同時在操作，那就會突破這台server的承受能力，這時就會遭遇大流量問題。因此是個相對問題。</p>
 <p>甚麼是高併發:<br>假如server在能夠承受請求的情況下，發生變數競爭的問題。同樣以購物網站作為例子，假如今天有手機特賣活動，剩一支手機的時候，但同時有使用者A以及使用者B皆成功下定。</p>
@@ -208,7 +212,6 @@
 
 <p>但是模擬併發情況時，卻會看到Quantity是負的情況。<br>遇到這種情況有很多解決方式，今天介紹比較其中一種。使用樂觀鎖是一種比較容易的解決方式，因為目前的問題也沒有要用到複雜的條件。</p>
 
-      
     </div>
 
     
@@ -216,92 +219,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/03/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-angle-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/03/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/03/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-05-03 16:58:01" itemprop="dateCreated datePublished" datetime="2024-05-03T16:58:01+08:00">2024-05-03</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
