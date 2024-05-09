@@ -19,23 +19,33 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+    <meta name="description" content="今天也是彌補遺憾系列:在AppWorkSchool的時候想要使用工具進行高併發情境模擬，但礙於資質拙劣來不及在專案時限內進行。 首先介紹一下樂觀鎖是甚麼 樂觀並行控制Optimistic Concurrency Control(OOC)，也稱作樂觀鎖Optimistic Locking。我們會在 table 欄位上添加 version 欄位來進行更新的確認，在更新資料前我們會撈取該筆資料的 ver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景">
+<meta property="og:url" content="http://example.com/2024/05/09/k6/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="今天也是彌補遺憾系列:在AppWorkSchool的時候想要使用工具進行高併發情境模擬，但礙於資質拙劣來不及在專案時限內進行。 首先介紹一下樂觀鎖是甚麼 樂觀並行控制Optimistic Concurrency Control(OOC)，也稱作樂觀鎖Optimistic Locking。我們會在 table 欄位上添加 version 欄位來進行更新的確認，在更新資料前我們會撈取該筆資料的 ver">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.imgur.com/Eg2MsII.png">
+<meta property="og:image" content="https://i.imgur.com/s6PMDUz.png">
+<meta property="og:image" content="https://i.imgur.com/zBevTSS.png">
+<meta property="og:image" content="https://i.imgur.com/7j9t1Vm.png">
+<meta property="og:image" content="https://i.imgur.com/E0ES08a.png">
+<meta property="article:published_time" content="2024-05-09T07:26:26.000Z">
+<meta property="article:modified_time" content="2024-05-09T18:06:24.495Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/Eg2MsII.png">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2024/05/09/k6/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/05/09/k6/","path":"2024/05/09/k6/","title":"樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hexo</title>
+<title>樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景 | Hexo</title>
   
 
 
@@ -65,7 +75,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Hexo</h1>
+      <p class="site-title">Hexo</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -129,16 +139,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/09/k6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -152,13 +163,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="name" content="樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景 | Hexo">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/09/k6/" class="post-title-link" itemprop="url">樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -187,8 +198,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p>今天也是彌補遺憾系列:<br>在AppWorkSchool的時候想要使用工具進行高併發情境模擬，但礙於資質拙劣來不及在專案時限內進行。</p>
+    <div class="post-body" itemprop="articleBody"><p>今天也是彌補遺憾系列:<br>在AppWorkSchool的時候想要使用工具進行高併發情境模擬，但礙於資質拙劣來不及在專案時限內進行。</p>
 <p>首先介紹一下樂觀鎖是甚麼</p>
 <p>樂觀並行控制Optimistic Concurrency Control(OOC)，也稱作樂觀鎖Optimistic Locking。我們會在 table 欄位上添加 version 欄位來進行更新的確認，在更新資料前我們會撈取該筆資料的 version 並且在更新時，利用這個 version 與 table 內目前的 version 進行比對，若相同則代表這段時間沒有人修改資料，可進行更新動作；反之代表有人比你早一步更新。</p>
 <p>我用樂觀鎖設計的欄位來做示範<br><img src="https://i.imgur.com/Eg2MsII.png" alt="Image"></p>
@@ -222,7 +232,6 @@
 <p>想想去年還在AppWorkSchool耍白癡，不知道大家現在過得好不好，好感慨阿~<br><img src="https://i.imgur.com/zBevTSS.png" alt="Image"><br><img src="https://i.imgur.com/7j9t1Vm.png" alt="Image"></p>
 <p><img src="https://i.imgur.com/E0ES08a.png" alt="Image"></p>
 
-      
     </div>
 
     
@@ -230,186 +239,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/04/optimistic-concurrency-control/" rel="prev" title="併發解決方案 - 樂觀鎖">
+                  <i class="fa fa-angle-left"></i> 併發解決方案 - 樂觀鎖
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/04/optimistic-concurrency-control/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/04/optimistic-concurrency-control/" class="post-title-link" itemprop="url">併發解決方案 - 樂觀鎖</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-05-04 14:15:11" itemprop="dateCreated datePublished" datetime="2024-05-04T14:15:11+08:00">2024-05-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-05-08 21:29:09" itemprop="dateModified" datetime="2024-05-08T21:29:09+08:00">2024-05-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>研究目的:<br>剛接觸後端的時候就對大流量以及高併發的設計很有興趣，但礙於當初製作個人專案時間有限以及相關知識涉略不足，因此沒能系統性的去理解這門學問。</p>
-<p>最近有時間重新研究這個課題，之前專案想做的主題和購物網站的秒殺活動或是熱門演唱會的售票網站方向大致向同。都是想研究一個網頁應用在大流量以及高併發下藥怎麼設計。</p>
-<p>甚麼是大流量問題:<br>每個server有處理請求的極限，如果今天某電商網站的server只有一台，並且這台server的請求處理極限是每秒鐘100筆。如果有超過一百個使用者同時在操作，那就會突破這台server的承受能力，這時就會遭遇大流量問題。因此是個相對問題。</p>
-<p>甚麼是高併發:<br>假如server在能夠承受請求的情況下，發生變數競爭的問題。同樣以購物網站作為例子，假如今天有手機特賣活動，剩一支手機的時候，但同時有使用者A以及使用者B皆成功下定。</p>
-<p>要怎麼解決大流量:<br>通常是從以系統層面來考量，方式有前端以及後端各自的解決方案，</p>
-<p>前端的的話會使用負載平衡，像是AWS的<br>Elastic Load Balancing、google的Cloud Load Balancing以及microsoft的Azure Load Balancer。</p>
-<p>後端有水平擴展以及垂直擴展兩種類型。</p>
-<p>水平擴展:<br>將系統的數量增加。像是資料庫的讀寫分離系統(CQRS)。</p>
-<p>垂直擴展:<br>升級系統的硬體條件。例如替換記憶體或是CPU等。</p>
-<p>剛寫程式怎麼可能會知道CQRS是甚麼東東，甚至是CQRS使用到的工具以及程式設計方式，因此後續會再寫文章專門對CQRS介紹。</p>
-<p>接著再繼續介紹系統是如何解決高併發的問題:<br>併發問題要在程式面討論，承接一開始的電商舉辦秒殺活動的舉例，<br>A使用者和B使用者對僅剩一個的商品進行下單，並且也都下單成功。</p>
-<p>建立一個資料表Product並建立一個PK在ProductID欄位上，裡面Patch一筆資料ProductId &#x3D; 1剩餘數量有1個</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE dbo.Product(</span><br><span class="line">	ProductID INT NOT NULL,</span><br><span class="line">	Quantity DECIMAL NOT NULL</span><br><span class="line">	PRIMARY KEY (</span><br><span class="line">		ProductID</span><br><span class="line">	)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">INSERT INTO dbo.Product VALUES (1,1);</span><br></pre></td></tr></table></figure>
-
-
-<p>下面這段為執行產品數量扣除的腳本:<br>當ProductID是1的產品的剩餘數量大於@Quantity時，執行扣除。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">BEGIN TRAN</span><br><span class="line">	DECLARE @ProductID INT = 1,</span><br><span class="line">			@Quantity DECIMAL(18,4) = 1</span><br><span class="line"></span><br><span class="line">	IF EXISTS(</span><br><span class="line">		SELECT 1</span><br><span class="line">		FROM dbo.Product</span><br><span class="line">		WHERE ProductID = @ProductID</span><br><span class="line">			  AND Quantity &gt;= @Quantity </span><br><span class="line">	)</span><br><span class="line">	BEGIN</span><br><span class="line">		UPDATE dbo.Product</span><br><span class="line">		SET Quantity = Quantity - @Quantity</span><br><span class="line">		WHERE ProductID = @ProductID</span><br><span class="line">	END</span><br><span class="line"></span><br><span class="line">COMMIT TRAN</span><br></pre></td></tr></table></figure>
-
-<p>但是模擬併發情況時，卻會看到Quantity是負的情況。<br>遇到這種情況有很多解決方式，今天介紹比較其中一種。使用樂觀鎖是一種比較容易的解決方式，因為目前的問題也沒有要用到複雜的條件。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/03/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/03/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-05-03 16:58:01" itemprop="dateCreated datePublished" datetime="2024-05-03T16:58:01+08:00">2024-05-03</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
