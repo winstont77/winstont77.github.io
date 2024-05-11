@@ -145,6 +145,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://winstont77.github.io/2024/05/11/feat-concurency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/11/feat-concurency/" class="post-title-link" itemprop="url">資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-05-11 19:29:05" itemprop="dateCreated datePublished" datetime="2024-05-11T19:29:05+08:00">2024-05-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-05-12 03:16:10" itemprop="dateModified" datetime="2024-05-12T03:16:10+08:00">2024-05-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前言.<br>打算將下面兩個主題分開來闡述:<br>併發情況下使用預設隔離層級欄位的交易<br>如何防止庫存超扣-樂觀鎖<br>先打下來免得之後忘掉…</p>
+<p>併發情況下使用預設隔離層級欄位的交易.<br>先使用SQL建立商品Id及庫存數量</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> dbo.Product(</span><br><span class="line">	ProductID <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>,            <span class="comment">/*商品Id*/</span></span><br><span class="line">	Quantity <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>              <span class="comment">/*庫存數量*/</span></span><br><span class="line">	<span class="keyword">PRIMARY</span> KEY (</span><br><span class="line">		ProductID</span><br><span class="line">	)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> dbo.Product <span class="keyword">VALUES</span> (<span class="number">1</span>,<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接著會使用測試工具進行高併發情的模擬，我用的是SQLQueryStress。<br>並且在測試工具的參數中給定<br>Number of Iterations:50<br>Number of Threads:100<br>如下:<br><img src="https://i.imgur.com/kYjFowv.png" alt="Image"></p>
+<p>並且在測試工具中使用以下腳本</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span> TRAN</span><br><span class="line">    <span class="comment">/* 訂單選擇的商品、以及訂購的數量 */</span></span><br><span class="line">	<span class="keyword">DECLARE</span> <span class="variable">@ProductID</span> <span class="type">INT</span> <span class="operator">=</span> <span class="number">1</span>,</span><br><span class="line">			<span class="variable">@Quantity</span> <span class="type">INT</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">    <span class="comment">/* 判斷是否有此商品Id以及足夠庫存 */</span></span><br><span class="line">	IF <span class="keyword">EXISTS</span>(</span><br><span class="line">		<span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">		<span class="keyword">FROM</span> dbo.Product</span><br><span class="line">		<span class="keyword">WHERE</span> ProductID <span class="operator">=</span> <span class="variable">@ProductID</span></span><br><span class="line">			  <span class="keyword">AND</span> Quantity <span class="operator">&gt;=</span> <span class="variable">@Quantity</span> </span><br><span class="line">	)</span><br><span class="line">    <span class="comment">/* 有此商品以及足夠庫存，則對資料庫內該商品的庫存進行扣減 */</span></span><br><span class="line">	<span class="keyword">BEGIN</span></span><br><span class="line">		<span class="keyword">UPDATE</span> dbo.Product</span><br><span class="line">		<span class="keyword">SET</span> Quantity <span class="operator">=</span> Quantity <span class="operator">-</span> <span class="variable">@Quantity</span></span><br><span class="line">		<span class="keyword">WHERE</span> ProductID <span class="operator">=</span> <span class="variable">@ProductID</span></span><br><span class="line">	<span class="keyword">END</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COMMIT</span> TRAN</span><br></pre></td></tr></table></figure>
+
+<p>接著按下Go<br>跑完後去看資料庫內的庫存<br>執行該語法</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> Product</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgur.com/ZwfJWjP.png" alt="Image"></p>
+<p>哪尼!!!怎麼會這樣，不是有用IF做判斷了嗎。<br>為什麼還會出現庫存被扣到是負的狀況。</p>
+<p>可以參考這個圖例<br><img src="https://i.imgur.com/9jCS1Kr.png" alt="Image"><br>每一次的SQL指令要用到的資料都是當下從資料庫取得，因此阿冠在IF條件時的查詢，雖然是True，但是阿冠的交易進行到一半的時候，資料庫的庫存資料遭到Allen(腦袋)修改，當阿冠要修改庫存的時候，這時候庫存已經為0了，阿冠又繼續執行了更改庫存的交易，因此庫存被扣到負的。</p>
+<p>為什麼會產生這個現象?<br>因為SQL Server的預設隔離層級為READ COMMITTED<br>READ COMMITTED又是啥?</p>
+<p>Read Committed: 代表 transaction 只能讀到別的 transaction 已經 commit 的資料，沒有 commit 的話就不會讀到。包含了Non-repeatable reads和Phantom reads這兩種類型的表現。</p>
+<p>所以以剛剛的例子來解釋就是阿冠的交易讀到了Allen已經COMMITTED的交易，並且是屬於Non-repeatable reads的行為，是Read Committed這個隔離層級在併發情況下允許的行為模式。</p>
+<p>如果不知道Non-repeatable reads和Phantom reads是啥，這邊補充一下<br>Non-repeatable reads:<br><img src="https://i.imgur.com/DIVNxYl.png" alt="Image"></p>
+<p>Phantom reads:<br><img src="https://i.imgur.com/KFBwH65.png" alt="Image"></p>
+<p>下一篇會講要如何解決超賣問題喔!<br>敬請期待XD~</p>
+<p>心得:<br>這個文章的門檻好高，資料庫的操作資料的方式就把我搞得暈頭轉向的。一開始我以為每個交易在下SQL指令的時候會先將資料庫的資料拿出來使用，所以一直無法理解為什麼阿冠的交易明明就已經拿到通過IF條件的庫存，為什麼還是會超賣。但之後才想到每個指令都是在資料庫Server裡操作資料。後來又想起了隔離層級這個課題，研究了一下隔離層級包含的三種行為後，以及SQL指令會直接在資料庫Server裡操作資料，兩個概念搭配後才理解這個案例到底發生了甚麼事。</p>
+<p>感謝腦袋兄病危(其實只是感冒)之時還不忘認真閱讀我的文章，讓我能對這個高併發這個主題有更清楚的認識，希望腦袋兄可以早日康復。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://winstont77.github.io/2024/05/09/k6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -457,7 +543,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
