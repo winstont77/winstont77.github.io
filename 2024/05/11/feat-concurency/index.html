@@ -29,11 +29,11 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/kYjFowv.png">
 <meta property="og:image" content="https://i.imgur.com/ZwfJWjP.png">
-<meta property="og:image" content="https://i.imgur.com/9jCS1Kr.png">
+<meta property="og:image" content="https://i.imgur.com/4bla2Oq.png">
 <meta property="og:image" content="https://i.imgur.com/DIVNxYl.png">
 <meta property="og:image" content="https://i.imgur.com/KFBwH65.png">
 <meta property="article:published_time" content="2024-05-11T11:29:05.000Z">
-<meta property="article:modified_time" content="2024-05-11T19:19:20.875Z">
+<meta property="article:modified_time" content="2024-05-12T03:44:17.094Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/kYjFowv.png">
@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-05-12 03:19:20" itemprop="dateModified" datetime="2024-05-12T03:19:20+08:00">2024-05-12</time>
+                <time title="Modified: 2024-05-12 11:44:17" itemprop="dateModified" datetime="2024-05-12T11:44:17+08:00">2024-05-12</time>
               </span>
 
           
@@ -213,7 +213,7 @@
 
 <p><img src="https://i.imgur.com/ZwfJWjP.png" alt="Image"></p>
 <p>哪尼!!!怎麼會這樣，不是有用IF做判斷了嗎。<br>為什麼還會出現庫存被扣到是負的狀況。</p>
-<p>可以參考這個圖例<br><img src="https://i.imgur.com/9jCS1Kr.png" alt="Image"><br>每一次的SQL指令要用到的資料都是當下從資料庫取得，因此阿冠在IF條件時的查詢，雖然是True，但是阿冠的交易進行到一半的時候，資料庫的庫存資料遭到Allen(腦袋)修改，當阿冠要修改庫存的時候，這時候庫存已經為0了，阿冠又繼續執行了更改庫存的交易，因此庫存被扣到負的。</p>
+<p>可以參考這個圖例<br><img src="https://i.imgur.com/4bla2Oq.png" alt="Image"><br>每一次的SQL指令要用到的資料都是當下從資料庫取得，因此阿冠在IF條件時的查詢，雖然是True，但是阿冠的交易進行到一半的時候，資料庫的庫存資料遭到Allen(腦袋)修改，當阿冠要修改庫存的時候，這時候庫存已經為0了，阿冠又繼續執行了更改庫存的交易，因此庫存被扣到負的。</p>
 <p>為什麼會產生這個現象?<br>因為SQL Server的預設隔離層級為READ COMMITTED<br>READ COMMITTED又是啥?</p>
 <p>Read Committed: 代表 transaction 只能讀到別的 transaction 已經 commit 的資料，沒有 commit 的話就不會讀到。包含了Non-repeatable reads和Phantom reads這兩種類型的表現。</p>
 <p>所以以剛剛的例子來解釋就是阿冠的交易讀到了Allen已經COMMITTED的交易，並且是屬於Non-repeatable reads的行為，是Read Committed這個隔離層級在併發情況下允許的行為模式。</p>
