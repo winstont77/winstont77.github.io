@@ -168,10 +168,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-05-13 01:35:24 / Modified: 17:19:20" itemprop="dateCreated datePublished" datetime="2024-05-13T01:35:24+08:00">2024-05-13</time>
+              <time title="Created: 2024-05-13 01:35:24" itemprop="dateCreated datePublished" datetime="2024-05-13T01:35:24+08:00">2024-05-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-05-14 00:51:09" itemprop="dateModified" datetime="2024-05-14T00:51:09+08:00">2024-05-14</time>
+              </span>
 
           
 
@@ -205,11 +211,11 @@
 <p>獨佔鎖：<br>獨佔鎖在修改數據（如插入、更新或刪除操作）時使用。當交易對數據進行修改時，它會獲得獨佔鎖，以防止其他交易讀取或修改這些數據。獨佔鎖確保只有執行修改的交易可以訪問數據，直到交易完成，這有助於防止數據在提交前被其他交易看到或修改。</p>
 <p>以及對於原文中提到的交易有預設鎖定可以參考官方文件的READ COMMITTED部分。<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/sql/t-sql/statements/set-transaction-isolation-level-transact-sql?view=sql-server-ver16">https://learn.microsoft.com/en-us/sql/t-sql/statements/set-transaction-isolation-level-transact-sql?view=sql-server-ver16</a></p>
 <p>在高併發情境使用樂觀鎖的設計，不管腦袋或阿冠的交易開始的先後順序，只要在腦袋的交易先進行資料的更新，阿冠的交易在進行更新時都會拿到一樣的資料。</p>
-<p>這邊統整一下樂觀鎖的優缺點<br>優點:<br>施工中</p>
-<p>缺點:<br>施工中</p>
 <p>但如果是相同的高併發情境下使用悲觀鎖設計，交易開始的先後順序對相同一筆資料的讀取以及更新就會是不一樣的值。<br>並且悲觀鎖可以解決樂觀鎖設計造成高併發情況下資料不符合預期的情況。</p>
 <p>為什麼呢?<br>別急，下一篇就來講悲觀鎖是甚麼東西~</p>
-<p>心得:<br>幹累死。</p>
+<p>總結一下樂觀鎖的優缺點<br>優點:<br>樂觀鎖因為是使用Version來做驗證，而不是對在整個交易的時候使用獨佔鎖等來確保資料的一致性。因此相較於在整個交易過程使用獨佔鎖的交易，可以使資料庫有較好的吞吐量。</p>
+<p>缺點:<br>雖然使用Version來解決了高併發下的超賣問題，但是資料變化卻跟預期不符合。</p>
+<p>心得:<br>幹累死。<br><img src="https://i.imgur.com/RmOhIzD.png" alt="Image"></p>
 
       
     </div>
@@ -716,5 +722,5 @@
   
 
   <script src="https://winstont77.github.io/oneko/oneko.js"></script>
-</body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body>
 </html>
