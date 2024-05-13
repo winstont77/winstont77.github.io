@@ -24,7 +24,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易">
 <meta property="og:url" content="http://winstont77.github.io/2024/05/11/feat-concurency/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="歲月靜好的離職時光屋">
 <meta property="og:description" content="前言.打算將下面兩個主題分開來闡述:併發情況下使用預設隔離層級欄位的交易如何防止庫存超扣-樂觀鎖先打下來免得之後忘掉… 併發情況下使用預設隔離層級欄位的交易.先使用SQL建立商品Id及庫存數量 12345678910CREATE TABLE dbo.Product(	ProductID INT NOT NULL,            &#x2F;*商品Id*&#x2F;	Quantity INT NOT NULL">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://i.imgur.com/kYjFowv.png">
@@ -33,8 +33,8 @@
 <meta property="og:image" content="https://i.imgur.com/DIVNxYl.png">
 <meta property="og:image" content="https://i.imgur.com/KFBwH65.png">
 <meta property="article:published_time" content="2024-05-11T11:29:05.000Z">
-<meta property="article:modified_time" content="2024-05-12T04:22:31.599Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2024-05-13T08:53:31.468Z">
+<meta property="article:author" content="Winston Hsu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/kYjFowv.png">
 
@@ -51,7 +51,7 @@
   };
 </script>
 
-  <title>資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易 | Hexo</title>
+  <title>資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易 | 歲月靜好的離職時光屋</title>
   
 
 
@@ -102,7 +102,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
+      <h1 class="site-title">歲月靜好的離職時光屋</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -160,12 +160,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="Winston Hsu">
       <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="歲月靜好的離職時光屋">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-05-12 12:22:31" itemprop="dateModified" datetime="2024-05-12T12:22:31+08:00">2024-05-12</time>
+                <time title="Modified: 2024-05-13 16:53:31" itemprop="dateModified" datetime="2024-05-13T16:53:31+08:00">2024-05-13</time>
               </span>
 
           
@@ -240,7 +240,10 @@
     <a href="/2024/05/09/k6/" rel="prev" title="樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景">
       <i class="fa fa-chevron-left"></i> 樂觀鎖應用在高併發場景、學習如何使用K6模擬高併發場景
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/13/feat-ooc/" rel="next" title="資料庫設計與併發問題 - 樂觀鎖">
+      資料庫設計與併發問題 - 樂觀鎖 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -311,7 +314,7 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
+  <p class="site-author-name" itemprop="name">Winston Hsu</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -319,7 +322,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -351,7 +354,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">Winston Hsu</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
