@@ -20,19 +20,27 @@
     var CONFIG = {"hostname":"winstont77.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="前言:上一篇講到庫存扣減的腳本的設計如果使用樂觀所的設計，可以解決併發問題下產生的超賣問題，但是卻也會發生資料正確性不如預期。這篇文章要講的就是，併發情況下要怎麼可以避免超賣又能夠讓資料符合ACID中的一致性。 接下來直接使用SQL來解釋悲觀鎖是甚麼">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://winstont77.github.io/2024/05/03/hello-world/index.html">
+<meta property="og:title" content="資料庫設計與併發問題 - 悲觀鎖">
+<meta property="og:url" content="http://winstont77.github.io/2024/05/15/PCC/index.html">
 <meta property="og:site_name" content="Hanna &amp; Ruby &amp; Bru鼠 可愛動物區">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="前言:上一篇講到庫存扣減的腳本的設計如果使用樂觀所的設計，可以解決併發問題下產生的超賣問題，但是卻也會發生資料正確性不如預期。這篇文章要講的就是，併發情況下要怎麼可以避免超賣又能夠讓資料符合ACID中的一致性。 接下來直接使用SQL來解釋悲觀鎖是甚麼">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-05-03T08:58:01.453Z">
-<meta property="article:modified_time" content="2024-05-03T08:58:01.453Z">
+<meta property="og:image" content="https://i.imgur.com/de263Sv.png">
+<meta property="og:image" content="https://i.imgur.com/pTw7ueY.png">
+<meta property="og:image" content="https://i.imgur.com/dIFESyX.png">
+<meta property="og:image" content="https://i.imgur.com/uqkdAfk.png">
+<meta property="og:image" content="https://i.imgur.com/zBevTSS.png">
+<meta property="og:image" content="https://i.imgur.com/7j9t1Vm.png">
+<meta property="og:image" content="https://i.imgur.com/E0ES08a.png">
+<meta property="article:published_time" content="2024-05-15T07:49:16.000Z">
+<meta property="article:modified_time" content="2024-05-15T09:21:09.866Z">
 <meta property="article:author" content="Winston Hsu">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/de263Sv.png">
 
-<link rel="canonical" href="http://winstont77.github.io/2024/05/03/hello-world/">
+<link rel="canonical" href="http://winstont77.github.io/2024/05/15/PCC/">
 
 
 <script id="page-configurations">
@@ -45,7 +53,7 @@
   };
 </script>
 
-  <title>Hello World | Hanna & Ruby & Bru鼠 可愛動物區</title>
+  <title>資料庫設計與併發問題 - 悲觀鎖 | Hanna & Ruby & Bru鼠 可愛動物區</title>
   
 
 
@@ -150,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://winstont77.github.io/2024/05/03/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://winstont77.github.io/2024/05/15/PCC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -163,7 +171,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          資料庫設計與併發問題 - 悲觀鎖
         </h1>
 
         <div class="post-meta">
@@ -172,8 +180,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2024-05-03 16:58:01" itemprop="dateCreated datePublished" datetime="2024-05-03T16:58:01+08:00">2024-05-03</time>
+              <time title="Created: 2024-05-15 15:49:16 / Modified: 17:21:09" itemprop="dateCreated datePublished" datetime="2024-05-15T15:49:16+08:00">2024-05-15</time>
             </span>
 
           
@@ -187,19 +196,35 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <p>前言:<br>上一篇講到庫存扣減的腳本的設計如果使用樂觀所的設計，可以解決併發問題下產生的超賣問題，但是卻也會發生資料正確性不如預期。<br>這篇文章要講的就是，併發情況下要怎麼可以避免超賣又能夠讓資料符合ACID中的一致性。</p>
+<p>接下來直接使用SQL來解釋悲觀鎖是甚麼</p>
+<span id="more"></span>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>用最一開始的初始化方式(沒有版本欄位)</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> dbo.Product(</span><br><span class="line">	ProductID <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>,           <span class="comment">/* 商品Id */</span></span><br><span class="line">	Quantity <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>             <span class="comment">/* 庫存 */</span></span><br><span class="line">	<span class="keyword">PRIMARY</span> KEY (</span><br><span class="line">		ProductID</span><br><span class="line">	)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> dbo.Product <span class="keyword">VALUES</span> (<span class="number">1</span>,<span class="number">100</span>);       <span class="comment">/* 資料庫初始化商品Id設為1，庫存為100 */</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/de263Sv.png" alt="Image"></p>
+<p>接著會使用測試工具進行高併發情的模擬，我用的是SQLQueryStress。<br>並且在測試工具的參數中給定<br>Number of Iterations:50<br>Number of Threads:100<br>如下:<br><img src="https://i.imgur.com/pTw7ueY.png" alt="Image"></p>
+<p>並且在測試工具中使用以下腳本<br>BEGIN TRAN<br>    DECLARE @ProductID INT &#x3D; 1,<br>            @Quantity INT &#x3D; 1<br>    IF EXISTS(<br>        SELECT 1<br>        FROM dbo.Product WITH(ROWLOCK,XLOCK)   &#x2F;* 在Product這張表中使用行級的獨佔鎖 *&#x2F;<br>        WHERE ProductID &#x3D; @ProductID<br>              AND Quantity &gt;&#x3D; @Quantity<br>    )<br>    BEGIN<br>        UPDATE dbo.Product<br>        SET Quantity &#x3D; Quantity - @Quantity<br>        WHERE ProductID &#x3D; @ProductID<br>    END</p>
+<p>COMMIT TRAN</p>
+<p>接著按下Go<br>跑完後去看資料庫內的庫存<br>執行該語法</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> Product</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p><img src="https://i.imgur.com/dIFESyX.png" alt="Image"></p>
+<p>よかった~!!!終於沒有超賣，也沒有資料不符預期的一致性問題。</p>
+<p>「 よかった」是過去式，因此這個句型的意思是「當時要是做了&#x2F;達成某事的話就好了」，然而實際上當時沒有做到，屬於日文中與過去相反的假設。</p>
+<p>我們可以看到，悲觀鎖不是用Version或是時間戳記等欄位來做版本控制以達到判斷資料是否需要更新，而是直接使用獨佔鎖在讀取階段就進行了資料鎖定，擁有該資料的獨佔鎖的交易會對其他交易進行阻塞，避免被其他交易進行讀取或是修改直到擁有該獨佔鎖的交易將獨占鎖轉移到其他交易。</p>
+<p>解釋一下獨佔鎖的特性:<br>獨佔鎖會防止其他交易讀取或修改這些數據。</p>
+<p>因此這次阿冠和腦袋不會在交易的時候因為相同的資料操作而產生衝突。<br><img src="https://i.imgur.com/uqkdAfk.png" alt="Image"></p>
+<p>因此這次的情況其實沒有高併發，只能算是大流量。</p>
+<p>但是在現實世界絕對是只有一好沒有兩好，因為從上面的流程圖可以看到阿冠和腦袋對資料的操作提升為最高層級(Serializable)。因此我們看到悲觀鎖的設計犧牲了吞吐量來達成資料的一致性。</p>
+<p>這邊總結一下樂觀鎖的使用方式以及優缺點:</p>
+<p>使用方式:<br>交易中對要操作的目標資料全程使用獨佔鎖直到交易結束</p>
+<p>優點:<br>使用資料庫 Transaction 的機制來強迫執行的順序</p>
+<p>缺點：一但加入 Transaction 的機制會導致其他的 SQL command 針對這個 data 除了查詢功能外全部卡死，如果這段 Transaction 執行時間較長會給使用者不良的體驗並造成系統吞吐量下降</p>
+<p>心得:<br>在去年的時候還不知道要怎麼定義高併發情境，以至於不知道要怎麼使用工具模擬高併發，不知道要如何預期高併發造成的結果，資料庫端也不懂得如何設計應對併發的設計。<br>現在終於有能力觸及高併發這門學問，雖然只是研究高併發情境的第一步，但是卻覺得終於放下心中的一塊大石。</p>
+<p><img src="https://i.imgur.com/zBevTSS.png" alt="Image"><br><img src="https://i.imgur.com/7j9t1Vm.png" alt="Image"></p>
+<p><img src="https://i.imgur.com/E0ES08a.png" alt="Image"></p>
 
     </div>
 
@@ -214,11 +239,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2024/05/04/optimistic-concurrency-control/" rel="next" title="併發解決方案 - 樂觀鎖">
-      併發解決方案 - 樂觀鎖 <i class="fa fa-chevron-right"></i>
+    <a href="/2024/05/13/feat-ooc/" rel="prev" title="資料庫設計與併發問題 - 樂觀鎖">
+      <i class="fa fa-chevron-left"></i> 資料庫設計與併發問題 - 樂觀鎖
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -284,7 +309,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
