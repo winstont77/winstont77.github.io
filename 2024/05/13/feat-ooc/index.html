@@ -22,7 +22,7 @@
 
   <meta name="description" content="前言:上一篇講到庫存扣減的腳本的設計如果只使用預設的隔離層級，在高併發的情況下可能會造成超賣的現象。這篇文章要講的就是，併發情況下使用樂觀鎖解決超賣的問題。 直接使用SQL來解釋樂觀鎖是甚麼">
 <meta property="og:type" content="article">
-<meta property="og:title" content="資料庫設計與併發問題 - 樂觀鎖">
+<meta property="og:title" content="交易設計與併發問題 - 樂觀鎖">
 <meta property="og:url" content="http://winstont77.github.io/2024/05/13/feat-ooc/index.html">
 <meta property="og:site_name" content="Hanna &amp; Ruby &amp; Bru鼠 可愛動物區">
 <meta property="og:description" content="前言:上一篇講到庫存扣減的腳本的設計如果只使用預設的隔離層級，在高併發的情況下可能會造成超賣的現象。這篇文章要講的就是，併發情況下使用樂觀鎖解決超賣的問題。 直接使用SQL來解釋樂觀鎖是甚麼">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://i.imgur.com/OJK0rDV.png">
 <meta property="og:image" content="https://i.imgur.com/RmOhIzD.png">
 <meta property="article:published_time" content="2024-05-12T17:35:24.000Z">
-<meta property="article:modified_time" content="2024-05-15T06:55:40.379Z">
+<meta property="article:modified_time" content="2024-05-16T07:14:41.913Z">
 <meta property="article:author" content="Winston Hsu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/cetOJTT.png">
@@ -54,7 +54,7 @@
   };
 </script>
 
-  <title>資料庫設計與併發問題 - 樂觀鎖 | Hanna & Ruby & Bru鼠 可愛動物區</title>
+  <title>交易設計與併發問題 - 樂觀鎖 | Hanna & Ruby & Bru鼠 可愛動物區</title>
   
 
 
@@ -172,7 +172,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          資料庫設計與併發問題 - 樂觀鎖
+          交易設計與併發問題 - 樂觀鎖
         </h1>
 
         <div class="post-meta">
@@ -189,7 +189,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-05-15 14:55:40" itemprop="dateModified" datetime="2024-05-15T14:55:40+08:00">2024-05-15</time>
+                <time title="Modified: 2024-05-16 15:14:41" itemprop="dateModified" datetime="2024-05-16T15:14:41+08:00">2024-05-16</time>
               </span>
 
           
@@ -245,12 +245,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/05/11/feat-concurency/" rel="prev" title="資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易">
-      <i class="fa fa-chevron-left"></i> 資料庫設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易
+    <a href="/2024/05/11/feat-concurency/" rel="prev" title="交易設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易">
+      <i class="fa fa-chevron-left"></i> 交易設計與併發問題 - 併發情況下使用預設隔離層級欄位的交易
     </a></div>
       <div class="post-nav-item">
-    <a href="/2024/05/15/PCC/" rel="next" title="資料庫設計與併發問題 - 悲觀鎖">
-      資料庫設計與併發問題 - 悲觀鎖 <i class="fa fa-chevron-right"></i>
+    <a href="/2024/05/15/PCC/" rel="next" title="交易設計與併發問題 - 悲觀鎖">
+      交易設計與併發問題 - 悲觀鎖 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>

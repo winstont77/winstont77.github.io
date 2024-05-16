@@ -22,7 +22,7 @@
 
   <meta name="description" content="前言:上一篇講到庫存扣減的腳本的設計如果使用樂觀所的設計，可以解決併發問題下產生的超賣問題，但是卻也會發生資料正確性不如預期。這篇文章要講的就是，併發情況下要怎麼可以避免超賣又能夠讓資料符合ACID中的一致性。 接下來直接使用SQL來解釋悲觀鎖是甚麼">
 <meta property="og:type" content="article">
-<meta property="og:title" content="資料庫設計與併發問題 - 悲觀鎖">
+<meta property="og:title" content="交易設計與併發問題 - 悲觀鎖">
 <meta property="og:url" content="http://winstont77.github.io/2024/05/15/PCC/index.html">
 <meta property="og:site_name" content="Hanna &amp; Ruby &amp; Bru鼠 可愛動物區">
 <meta property="og:description" content="前言:上一篇講到庫存扣減的腳本的設計如果使用樂觀所的設計，可以解決併發問題下產生的超賣問題，但是卻也會發生資料正確性不如預期。這篇文章要講的就是，併發情況下要怎麼可以避免超賣又能夠讓資料符合ACID中的一致性。 接下來直接使用SQL來解釋悲觀鎖是甚麼">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://i.imgur.com/7j9t1Vm.png">
 <meta property="og:image" content="https://i.imgur.com/E0ES08a.png">
 <meta property="article:published_time" content="2024-05-15T07:49:16.000Z">
-<meta property="article:modified_time" content="2024-05-16T05:24:21.396Z">
+<meta property="article:modified_time" content="2024-05-16T07:14:26.312Z">
 <meta property="article:author" content="Winston Hsu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/de263Sv.png">
@@ -53,7 +53,7 @@
   };
 </script>
 
-  <title>資料庫設計與併發問題 - 悲觀鎖 | Hanna & Ruby & Bru鼠 可愛動物區</title>
+  <title>交易設計與併發問題 - 悲觀鎖 | Hanna & Ruby & Bru鼠 可愛動物區</title>
   
 
 
@@ -171,7 +171,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          資料庫設計與併發問題 - 悲觀鎖
+          交易設計與併發問題 - 悲觀鎖
         </h1>
 
         <div class="post-meta">
@@ -188,7 +188,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-05-16 13:24:21" itemprop="dateModified" datetime="2024-05-16T13:24:21+08:00">2024-05-16</time>
+                <time title="Modified: 2024-05-16 15:14:26" itemprop="dateModified" datetime="2024-05-16T15:14:26+08:00">2024-05-16</time>
               </span>
 
           
@@ -247,8 +247,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/05/13/feat-ooc/" rel="prev" title="資料庫設計與併發問題 - 樂觀鎖">
-      <i class="fa fa-chevron-left"></i> 資料庫設計與併發問題 - 樂觀鎖
+    <a href="/2024/05/13/feat-ooc/" rel="prev" title="交易設計與併發問題 - 樂觀鎖">
+      <i class="fa fa-chevron-left"></i> 交易設計與併發問題 - 樂觀鎖
     </a></div>
       <div class="post-nav-item"></div>
     </div>
