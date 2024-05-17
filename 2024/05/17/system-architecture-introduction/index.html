@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"winstont77.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、單體架構  單體架構比較初級，典型的三級架構，前端(Web&#x2F;手機端)+中間業務邏輯層+資料庫層。這是典型的Java Spring mvc或Python Django框架的應用。其架構圖如下圖所示：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四種軟體架構：單體架構、分散式架構、微服務架構、Serverless架構">
+<meta property="og:url" content="http://winstont77.github.io/2024/05/17/system-architecture-introduction/index.html">
+<meta property="og:site_name" content="Hanna &amp; Ruby &amp; Bru鼠 可愛動物區">
+<meta property="og:description" content="一、單體架構  單體架構比較初級，典型的三級架構，前端(Web&#x2F;手機端)+中間業務邏輯層+資料庫層。這是典型的Java Spring mvc或Python Django框架的應用。其架構圖如下圖所示：">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.imgur.com/n2pJA4l.png">
+<meta property="og:image" content="https://i.imgur.com/tievkP3.png">
+<meta property="og:image" content="https://i.imgur.com/cgyl8ZW.png">
+<meta property="og:image" content="https://i.imgur.com/Vb68Cnv.png">
+<meta property="article:published_time" content="2024-05-17T07:07:49.000Z">
+<meta property="article:modified_time" content="2024-05-17T08:40:09.776Z">
+<meta property="article:author" content="Winston Hsu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/n2pJA4l.png">
+
+<link rel="canonical" href="http://winstont77.github.io/2024/05/17/system-architecture-introduction/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>四種軟體架構：單體架構、分散式架構、微服務架構、Serverless架構 | Hanna & Ruby & Bru鼠 可愛動物區</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hanna & Ruby & Bru鼠 可愛動物區</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://winstont77.github.io/2024/05/17/system-architecture-introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Winston Hsu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hanna & Ruby & Bru鼠 可愛動物區">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          四種軟體架構：單體架構、分散式架構、微服務架構、Serverless架構
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-05-17 15:07:49 / Modified: 16:40:09" itemprop="dateCreated datePublished" datetime="2024-05-17T15:07:49+08:00">2024-05-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3>一、單體架構</h3>
+
+<p>單體架構比較初級，典型的三級架構，前端(Web&#x2F;手機端)+中間業務邏輯層+資料庫層。這是典型的Java Spring mvc或Python Django框架的應用。其架構圖如下圖所示：<br><img src="https://i.imgur.com/n2pJA4l.png" alt="Image"></p>
+<span id="more"></span>
+
+<p>單體架構的應用比較容易部署、測試， 在專案的初期，單體應用可以很好地運作。然而，隨著需求的不斷增加， 越來越多的人加入開發團隊，程式碼庫也在快速膨脹。慢慢地，單體應用變得越來越臃腫，可維護性、彈性逐漸降低，維護成本越來越高。以下是單體架構應用的一些缺點：</p>
+<ul>
+<li>
+<h5>複雜度高：</h5> 以一個百萬行級別的單體應用為例，整個專案包含的模組非常多、模組的邊界模糊、 依賴關係不清晰、 程式碼品質參差不齊、 混亂地堆砌在一起。可想而知整個專案非常複雜。每次修改程式碼都心驚膽戰， 甚至增加一個簡單的功能， 或修改一個Bug都會帶來隱含的缺陷。
+
+</li>
+
+<li>
+<h5>技術債：</h5> 隨著時間推移、需求變更和人員更迭，會逐漸形成應用程式的技術債務， 並且越積 越多。 “ 不壞不修”， 這在軟體開發中非常常見， 在單體應用中這種思想更甚。已使用的系統設計或程式碼難以被修改，因為應用程式中的其他模組可能會以意料之外的方式使用它。
+</li>
+
+<li>
+<h5>部署頻率低：</h5> 隨著程式碼的增多，建置和部署的時間也會增加。而在單體應用中， 每次功能的變更或缺陷的修復都會導致需要重新部署整個應用。全量部署的方式耗時長、 影響範圍大、 風險高， 這使得單體應用專案上線部署的頻率較低。而部署頻率低又導致兩次發布之間會有大量的功能變更和缺陷修復，出錯率比較高。
+</li>
+
+<li>
+<h5>可靠性差：</h5> 某個應用程式Bug，例如死循環、記憶體溢位等， 可能會導致整個應用程式的崩潰。
+</li>
+
+<li>
+<h5>擴展能力受限：</h5> 單體應用只能作為一個整體擴展，無法依照業務模組的需要進行伸縮。例如，應用中有的模組是運算密集型的，它需要強勁的CPU； 有的模組則是IO密集型的，需要更大的記憶體。由於這些模組部署在一起，不得不在硬體的選擇上做出妥協。
+</li>
+
+<li>
+<h5>阻礙技術創新：</h5> 單體應用往往使用統一的技術平台或方案解決所有的問題， 團隊中的每個成員 都必須使用相同的開發語言和框架，要想引入新框架或新技術平台會非常困難。
+</li>
+</ul>
+
+<h3>二、分散式應用</h3>
+
+<p>中級架構，分散式應用，中間層分散式+資料庫分散式，是單體架構的並發擴展，將一個大的系統劃分為多個業務模組，業務模組分別部署在不同的伺服器上，各個業務模組之間透過介面進行資料互動。資料庫也大量採用分散式資料庫，如redis、ES、solor等。透過LVS&#x2F;Nginx代理應用，將使用者請求平衡的負載到不同的伺服器上。其架構圖如下圖所示：</p>
+<p><img src="https://i.imgur.com/tievkP3.png" alt="Image"></p>
+<p>該架構相對於單體架構來說，這種架構提供了負載平衡的能力，大大提高了系統負載能力，並解決了網站高並發的需求。另外還有以下特色：</p>
+<ul>
+<li>
+<h5>降低了耦合度：</h5>把模組拆分,使用介面通訊,降低模組之間的耦合度。
+</li>
+<li>
+<h5>責任清晰：</h5>把專案拆分成若干個子專案,不同的團隊負責不同的子專案。
+</li>
+<li>
+<h5>擴充方便：</h5>增加功能時只需要再增加一個子項目,呼叫其他系統的介面就可以。
+</li>
+<li>
+<h5>部署方便:</h5>可以靈活的進行分散部署。
+</li>
+<li>
+<h5>提升程式碼的復用性：</h5>例如service層,如果不採用分散式rest服務方式架構就會在手機wap商城,微信商城,pc,android，ios每個端都要寫一個service層邏輯,開發量大,難以維護一起升級,這時候就可以採用分散式rest服務方式,公用一個service層。
+</li>
+<li>
+<h5>缺點 : </h5>系統之間的互動要使用遠端通訊,介面開發增大工作量,但是利大於弊。
+</li>
+</ul>
+
+<h3>三、微服務架構</h3>
+微服务架构，主要是中间层分解，将系统拆分成很多小应用（微服务），微服务可以部署在不同的服务器上，也可以部署在相同的服务器不同的容器上。当应用的故障不会影响到其他应用，单应用的负载也不会影响到其他应用，其代表框架有Spring cloud、Dubbo等。 其架构图如下所示：
+
+<p><img src="https://i.imgur.com/cgyl8ZW.png" alt="Image"></p>
+<ul>
+<li>
+<h5>易於開發與維護：</h5> 一個微服務只會專注於一個特定的業務功能，所以它業務清晰、程式碼量較少。開發和維護單一微服務相對簡單。而整個應用是由若干個微服務建構而成的，所以整個應用也會被維持在一個可控狀態。
+</li>
+<li>
+<h5>單一微服務啟動較快：</h5> 單一微服務代碼量較少， 所以啟動會比較快。
+</li>
+<li>
+<h5>局部修改容易部署：</h5> 單體應用只要有修改，就得重新部署整個應用，微服務解決了這樣的問題。一般來說，對某個微服務進行修改，只需要重新部署這個服務即可。
+</li>
+<li>
+<h5>技術堆疊不受限：</h5>在微服務架構中，可以結合專案業務及團隊的特點，合理地選擇技術堆疊。例如某些服務可使用關聯式資料庫MySQL；某些微服務有圖形運算的需求，可以使用Neo4j；甚至可依需求，部分微服務使用Java開發，部分微服務使用Node.js開發。
+</li>
+</ul>
+
+<p>  微服務雖然有很多吸引人的地方，但它並不是免費的午餐，使用它是有代價的。使用微服務架構面臨的挑戰。</p>
+<ul>
+<li>
+<h5>維運要求較高：</h5>更多的服務意味著更多的維運投入。在單體架構中，只需要確保一個應用程式的正常運作。而在微服務中，需要保證數十甚至幾百個服務服務的正常運作與協作，這給運維帶來了極大的挑戰。
+</li>
+<li>
+<h5>分散式固有的複雜性：</h5>使用微服務建構的是分散式系統。對於一個分散式系統，系統容錯、網路延遲、分散式事務等都會帶來巨大的挑戰。
+</li>
+<li>
+<h5>介面調整成本高：</h5>微服務之間透過介面進行通訊。如果修改某一個微服務的API，可能所有使用了該介面的微服務都需要做調整。
+</li>
+<li>
+<h5>重複勞動：</h5>許多服務可能都會使用到相同的功能，而這個功能並沒有達到分解為一個微服務的程度，這個時候，可能各個服務都會開發這一功能，從而導致程式碼重複。儘管可以使用共享庫來解決這個問題（例如可以將這個功能封裝成公共元件，需要該功能的微服務引用該元件），但共享庫在多語言環境下就不一定行得通了。
+</li>
+</ul>
+
+<h3>四、Serverless架構</h3>
+當我們還在容器的浪潮中前進時，已經有一些革命先驅悄悄佈局另外一個雲端運算戰場：Serverless架構。
+Serverless架構允許開發者在不用管理伺服器的情況下建置部署和執行應用程式。無伺服器運算裡仍然有伺服器，只是伺服器是由雲端服務供應商負責處理配置、維護、拓展伺服器基礎設施的日常工作，開發者可以專注於開發程式碼。
+
+<p>目前業界並無統一標準，但是概念大致上一樣，因此這邊使用AWS的服務來舉例，如下圖:</p>
+<p><img src="https://i.imgur.com/Vb68Cnv.png" alt="Image"></p>
+<ul>
+<li>
+<h5>Event source：</h5>例如資料更動、資源更動、端點請求等。
+</li>
+<li>
+<h5>
+Lambda function：</h5>AWS Lambda 原生支援 Java、Go、PowerShell、Node.js、C#、Python 和 Ruby 程式碼，並提供 Runtime API，讓使用者可以使用任何其他程式設計語言編寫功能。
+</li>
+<li>
+<h5>Services：</h5>可以結合其他 AWS 服務做後續處理
+</li>
+</ul>
+
+<h4>哪些來源事件可以觸發 AWS Lambda？</h4>
+Lambda 函數和觸發程式 (trigger) 是使用 AWS Lambda 時的核心元件，Lambda 函數是處理事件的程式碼，而觸發程式是呼叫 Lambda 函數使其執行的事件，通常為 AWS 服務或應用程式。
+AWS Lambda 常見的事件來源有 Amazon S3、DynamoDB、網站 HTTP 請求、APP 等，AWS Lambda 還有支援更多 AWS 服務當作事件來源，如果需要詳細資訊，可以至 AWS 官方文件查詢。
+
+<p>接著介紹無伺服架構的優點:</p>
+<ul>
+<li>
+<h5>簡化設備運維：</h5>在原有的IT體系中，開發團隊即需要維護應用程序，同時還要維護硬體基礎設施；Serverless架構中，開發人員面對的將是第三方開發或自訂的API 和URL，底層硬體對於開發人員透明化了，技術團隊無需再專注於運維工作，能夠更專注於應用系統開發。
+</li>
+<li>
+<h5>提升可維護性：</h5>Serverless架構中，應用程式將呼叫多種第三方功能服務，組成最終的應用邏輯。目前，例如登陸鑑權服務，雲端資料庫服務等第三方服務在安全性、可用性、效能方面都進行了大量最佳化，開發團隊直接整合第三方的服務，能夠有效的降低開發成本，同時使得應用程式的運作維過程變得更加清晰，有效的提升了應用的可維護性。
+</li>
+<li>
+<h5>更快的開發速度：</h5>這一點在現在互聯網新創公司得到很好的體現，新創公司往往開始由於人員和資金等問題，不可能每個產品線都同時進行，這時候就可以考慮第三方的Baas平台，例如使用微信的用戶認證、阿里雲提供的RDS，極光的消息推送，第三方支付及地理位置等等，能夠很快進行產品開發的速度，把工作重點放在業務實現上，把產品更快的推向市場。
+</li>
+</ul>
+
+<p>缺點:</p>
+<ul>
+<li>
+<h5>廠商平台綁定：</h5>平台會提供Serverless架構給大玩家，例如AWS Lambda，運行它需要使用AWS指定的服務，例如API網關，DynamoDB，S3等等，一旦你在這些服務上開發一個複雜系統，你會黏牢AWS，以後只好任由他們漲價定價或下架等操作，個人化需求很難滿足，不能進行隨意的遷移或遷移的成本比較大，同時不可避免帶來一些損失。 Baas產業內一個比較典型的事件，2016年1月19日Facebook關閉曾經花巨額資金收購的Parse，造成用戶不得不遷移在這個平台中產生一年多的數據，無疑需要花費比較大的人力和時間成本。
+</li>
+<li>
+<h5>成功案例比較少，沒有行業標準：</h5>目前的情況也只適合簡單的應用開發，缺乏大型成功案例的推動。對於Serverless缺乏統一的認知以及對應的標準，無法適應所有的雲端平台。
+</li>
+</ul>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/17/microservice-introduce/" rel="prev" title="微服務和單體式架構的比較">
+      <i class="fa fa-chevron-left"></i> 微服務和單體式架構的比較
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+  <script src="https://utteranc.es/client.js"
+        repo="winstont77/winstont77.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+  </script>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">一、單體架構</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.1.</span> <span class="nav-text">複雜度高：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.2.</span> <span class="nav-text">技術債：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.3.</span> <span class="nav-text">部署頻率低：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.4.</span> <span class="nav-text">可靠性差：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.5.</span> <span class="nav-text">擴展能力受限：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.6.</span> <span class="nav-text">阻礙技術創新：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">二、分散式應用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.1.</span> <span class="nav-text">降低了耦合度：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.2.</span> <span class="nav-text">責任清晰：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.3.</span> <span class="nav-text">擴充方便：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.4.</span> <span class="nav-text">部署方便:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.5.</span> <span class="nav-text">提升程式碼的復用性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">2.0.6.</span> <span class="nav-text">缺點 : </span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">三、微服務架構</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.1.</span> <span class="nav-text">易於開發與維護：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.2.</span> <span class="nav-text">單一微服務啟動較快：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.3.</span> <span class="nav-text">局部修改容易部署：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.4.</span> <span class="nav-text">技術堆疊不受限：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.5.</span> <span class="nav-text">維運要求較高：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.6.</span> <span class="nav-text">分散式固有的複雜性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.7.</span> <span class="nav-text">介面調整成本高：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.0.8.</span> <span class="nav-text">重複勞動：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">四、Serverless架構</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.0.1.</span> <span class="nav-text">Event source：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.0.2.</span> <span class="nav-text">
+Lambda function：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.0.3.</span> <span class="nav-text">Services：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">哪些來源事件可以觸發 AWS Lambda？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.1.</span> <span class="nav-text">簡化設備運維：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.2.</span> <span class="nav-text">提升可維護性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.3.</span> <span class="nav-text">更快的開發速度：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.4.</span> <span class="nav-text">廠商平台綁定：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">4.1.5.</span> <span class="nav-text">成功案例比較少，沒有行業標準：</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Winston Hsu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Winston Hsu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script src="https://winstont77.github.io/oneko/oneko.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+</html>
