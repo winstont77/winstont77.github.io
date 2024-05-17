@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-05-17 02:54:49 / Modified: 04:48:29" itemprop="dateCreated datePublished" datetime="2024-05-17T02:54:49+08:00">2024-05-17</time>
+              <time title="Created: 2024-05-17 02:54:49 / Modified: 15:02:54" itemprop="dateCreated datePublished" datetime="2024-05-17T02:54:49+08:00">2024-05-17</time>
             </span>
 
           
@@ -184,8 +184,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>前言:<br>先來講講為啥要研究微服務，之前把樂觀鎖以及悲觀鎖研究完畢後了解到悲觀鎖在高併發情形下可以解決資料一致性的問題，但是卻會犧牲資料庫的吞吐量。這還只是就單一交易的情況在討論，如果是從系統角度出發，許多功能的交易都有用到悲觀鎖的設計，很有可能在併發情形下發生死鎖。</p>
-<p>假設大雄是軟體工程師，公司的產品是一個單體式架構（Monolithic Architecture）並且因使用量逐漸不堪複合常常發生高併發產生的問題，今天老闆要求大雄將不堪負荷的單體式架構進行調整。大雄告訴老闆添購效能更強的CPU以及顯示卡，結果當然是被老闆拒絕。大雄苦思冥想不知道該怎麼辦，只好…</p>
+          <h3>前言</h3>
+先來講講為啥要研究微服務，之前把樂觀鎖以及悲觀鎖研究完畢後了解到悲觀鎖在高併發情形下可以解決資料一致性的問題，但是卻會犧牲資料庫的吞吐量。這還只是就單一交易的情況在討論，如果是從系統角度出發，許多功能的交易都有用到悲觀鎖的設計，很有可能在併發情形下發生死鎖。
+
+<p>假設大雄是軟體工程師，公司的產品是一個單體式架構（Monolithic Architecture）並且因使用量逐漸不堪負荷，常常發生高併發產生的問題，今天老闆要求大雄將不堪負荷的單體式架構進行調整。大雄告訴老闆添購效能更強的CPU以及顯示卡，結果老闆聽到要花錢直接就拒絕了並問大雄還有沒有其他方案。大雄苦思冥想不知道該怎麼辦，只好…</p>
 <p>多拉A夢<br>那有沒有方案可以解決悲觀鎖在併發情況下可能產生死鎖的問題?<br><img src="https://i.imgur.com/WBmuYdS.png" alt="Image"></p>
 <p>燈燈燈燈燈<del>燈燈</del><br><img src="https://i.imgur.com/zIh9stz.png" alt="Image"></p>
           <!--noindex-->
